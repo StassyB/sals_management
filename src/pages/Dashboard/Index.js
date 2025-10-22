@@ -9,7 +9,7 @@ const kpiData = [
   { title: "Total Sales", value: "Ksh.24,120", subtitle: "Today", icon: "💰" },
   { title: "Pending Orders", value: 18, subtitle: "Needs attention", icon: "📦" },
   { title: "Low Stock", value: 12, subtitle: "Restock soon", icon: "⚠️" },
-  { title: "New Customers", value: 43, subtitle: "This week", icon: "🧑‍🤝‍🧑" },
+  { title: "Current Customers", value: 43, subtitle: "This week", icon: "🧑‍🤝‍🧑" },
 ];
 
 const lineData = [
