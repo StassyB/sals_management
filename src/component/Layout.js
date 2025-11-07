@@ -1,8 +1,28 @@
 import React, { useMemo, useState } from "react";
-import { AppBar,Toolbar,Drawer,List,ListItem,ListItemIcon,ListItemText,IconButton,InputBase,Box,Avatar,Badge,Menu,MenuItem,Typography,Paper,Tooltip,CssBaseline, } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  IconButton,
+  InputBase,
+  Box,
+  Avatar,
+  Badge,
+  Menu,
+  MenuItem,
+  Typography,
+  Paper,
+  Tooltip,
+  CssBaseline,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-// Correct imports for icons
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import DashboardIcon from "@mui/icons-material/Dashboard";
@@ -26,9 +46,12 @@ const menuItems = [
 
 export default function Layout({ children }) {
   const location = useLocation();
-  const [open, setOpen] = useState(true);
+  const themeMUI = useTheme();
+  const isMobile = useMediaQuery(themeMUI.breakpoints.down("sm"));
+
+  const [open, setOpen] = useState(!isMobile); // closed by default on mobile
   const [anchorEl, setAnchorEl] = useState(null);
-const [themeMode, setThemeMode] = useState("light");
+  const [themeMode, setThemeMode] = useState("light");
 
   const toggleDrawer = () => setOpen((prev) => !prev);
   const handleProfileOpen = (e) => setAnchorEl(e.currentTarget);
@@ -36,7 +59,6 @@ const [themeMode, setThemeMode] = useState("light");
   const toggleTheme = () =>
     setThemeMode((prev) => (prev === "light" ? "dark" : "light"));
 
-  // Create MUI theme
   const theme = useMemo(
     () =>
       createTheme({
@@ -44,7 +66,7 @@ const [themeMode, setThemeMode] = useState("light");
           mode: themeMode,
           ...(themeMode === "light"
             ? {
-                primary: { main: "#6c5ce7" }, // soft purple
+                primary: { main: "#6c5ce7" },
                 background: { default: "#fbfbfd", paper: "#ffffff" },
                 text: { primary: "#000" },
               }
@@ -78,60 +100,50 @@ const [themeMode, setThemeMode] = useState("light");
           }}
         >
           <Toolbar sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            {/* Left: Menu + Logo */}
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <IconButton onClick={toggleDrawer} size="large">
                 <MenuIcon />
               </IconButton>
-              <Box
-                component="img"
-                src="/logo.jpg"
-                alt="Logo"
-                sx={{
-                  width: 36,
-                  height: 36,
-                  objectFit: "contain",
-                  position: "absolute",
-                  left: "10%",
-                  display: { xs: "none", sm: "block" },
-                }}
-              />
-              <Typography
-                variant="h6"
-                sx={{ fontWeight: 700, position: "absolute",
-                  left: "14%", display: { xs: "none", sm: "block" } }}
-              >
-                SalesTrack
-              </Typography>
+              {!isMobile && (
+                <>
+                  <Box
+                    component="img"
+                    src="/logo.jpg"
+                    alt="Logo"
+                    sx={{ width: 36, height: 36, objectFit: "contain" }}
+                  />
+                  <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                    SalesTrack
+                  </Typography>
+                </>
+              )}
             </Box>
 
-            {/* Center: Search */}
-             <Paper
-    sx={{
-      p: "6px 12px",
-      display: "flex",
-      alignItems: "center",
-      width: { xs: "70%", sm: "50%", md: "40%" },
-      maxWidth: 500,
-      borderRadius: "20px",
-      boxShadow:
-        themeMode === "light"
-          ? "0 6px 18px rgba(108,92,231,0.06)"
-          : "0 6px 18px rgba(0,0,0,0.6)",
-      border:
-        themeMode === "light"
-          ? "1px solid rgba(108,92,231,0.04)"
-          : "1px solid rgba(255,255,255,0.03)",
-      position: "absolute",
-      left: "50%",
-      transform: "translateX(-50%)",
-    }}
-  >
-    <SearchIcon sx={{ color: "primary.main", mr: 1 }} />
-    <InputBase placeholder="Search Products" fullWidth />
-  </Paper>
+            {/* Search */}
+            <Paper
+              sx={{
+                p: "6px 12px",
+                display: "flex",
+                alignItems: "center",
+                width: { xs: "70%", sm: "50%", md: "40%" },
+                maxWidth: 500,
+                borderRadius: "20px",
+                boxShadow:
+                  themeMode === "light"
+                    ? "0 6px 18px rgba(108,92,231,0.06)"
+                    : "0 6px 18px rgba(0,0,0,0.6)",
+                border:
+                  themeMode === "light"
+                    ? "1px solid rgba(108,92,231,0.04)"
+                    : "1px solid rgba(255,255,255,0.03)",
+                mx: isMobile ? 1 : "auto",
+              }}
+            >
+              <SearchIcon sx={{ color: "primary.main", mr: 1 }} />
+              <InputBase placeholder="Search Products" fullWidth />
+            </Paper>
 
-            {/* Right: Theme Toggle + Profile */}
+            {/* Right icons */}
             <Box sx={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 1 }}>
               <Tooltip title={themeMode === "light" ? "Switch to dark" : "Switch to light"}>
                 <IconButton onClick={toggleTheme} size="large">
@@ -149,7 +161,6 @@ const [themeMode, setThemeMode] = useState("light");
 
               <Box
                 onMouseEnter={handleProfileOpen}
-                // onMouseLeave={handleProfileClose}
                 sx={{
                   display: "flex",
                   alignItems: "center",
@@ -166,19 +177,21 @@ const [themeMode, setThemeMode] = useState("light");
                   },
                 }}
               >
-                <Avatar alt="Admin" src="/avatar.png"  sx={{
-                width: 42,
-                height: 42,
-                bgcolor: "#b0c4de", // Placeholder circle
-              }} />
-                <Box sx={{ display: { xs: "none", sm: "block" } }}>
-                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                    Admin
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    Admin
-                  </Typography>
-                </Box>
+                <Avatar
+                  alt="Admin"
+                  src="/avatar.png"
+                  sx={{ width: 42, height: 42, bgcolor: "#b0c4de" }}
+                />
+                {!isMobile && (
+                  <Box>
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                      Admin
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      Admin
+                    </Typography>
+                  </Box>
+                )}
               </Box>
 
               <Menu
@@ -198,10 +211,13 @@ const [themeMode, setThemeMode] = useState("light");
 
         {/* Sidebar */}
         <Drawer
-          variant="permanent"
+          variant={isMobile ? "temporary" : "permanent"}
+          open={open}
+          onClose={toggleDrawer}
           sx={{
             width: open ? 240 : 72,
-            [`& .MuiDrawer-paper`]: {
+            flexShrink: 0,
+            "& .MuiDrawer-paper": {
               width: open ? 240 : 72,
               top: 64,
               height: "calc(100% - 64px)",
@@ -213,52 +229,60 @@ const [themeMode, setThemeMode] = useState("light");
           }}
         >
           <List sx={{ pt: 1 }}>
-  {menuItems.map((item) => (
-    <Tooltip key={item.text} title={!open ? item.text : ""} placement="right" arrow>
-      <ListItem
-        button
-        component={Link}
-        to={item.path}
-        selected={location.pathname === item.path}
-        sx={{
-          justifyContent: open ? "flex-start" : "center",
-          px: open ? 2.5 : 1,
-          py: 1.25,
-          color: location.pathname === item.path
-            ? "primary.main"       // selected text color
-            : "text.primary",      // normal text color
-          "&:hover": {
-            bgcolor: themeMode === "light"
-              ? "rgba(15, 3, 110, 0.08)"
-              : "rgba(162,155,254,0.08)",
-          },
-        }}
-      >
-        <ListItemIcon
-          sx={{
-            minWidth: 0,
-            mr: open ? 2 : 0,
-            justifyContent: "center",
-            display: "flex",
-            color: location.pathname === item.path
-              ? "primary.main"      // selected icon color
-              : "text.primary",     // normal icon color
-          }}
-        >
-          {item.icon}
-        </ListItemIcon>
-        {open && <ListItemText primary={item.text} />}
-      </ListItem>
-    </Tooltip>
-  ))}
-</List>
-
+            {menuItems.map((item) => (
+              <Tooltip key={item.text} title={!open ? item.text : ""} placement="right" arrow>
+                <ListItem
+                  button
+                  component={Link}
+                  to={item.path}
+                  selected={location.pathname === item.path}
+                  sx={{
+                    justifyContent: open ? "flex-start" : "center",
+                    px: open ? 2.5 : 1,
+                    py: 1.25,
+                    color:
+                      location.pathname === item.path ? "primary.main" : "text.primary",
+                    "&:hover": {
+                      bgcolor:
+                        themeMode === "light"
+                          ? "rgba(15, 3, 110, 0.08)"
+                          : "rgba(162,155,254,0.08)",
+                    },
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 2 : 0,
+                      justifyContent: "center",
+                      color:
+                        location.pathname === item.path ? "primary.main" : "text.primary",
+                    }}
+                  >
+                    {item.icon}
+                  </ListItemIcon>
+                  {open && <ListItemText primary={item.text} />}
+                </ListItem>
+              </Tooltip>
+            ))}
+          </List>
         </Drawer>
 
         {/* Main content */}
-        <Box component="main" sx={{ flexGrow: 1, mt: 3, p: 10 }}>
-        {children}
-      </Box>
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+            mt: 3,
+            p: { xs: 2, sm: 3, md: 10 }, // smaller padding on mobile
+            width: "100%",
+          }}
+        >
+          {/* Make children responsive */}
+          <Box sx={{ width: { xs: "100%", sm: "95%", md: "auto" }, mx: "auto" }}>
+            {children}
+          </Box>
+        </Box>
       </Box>
     </ThemeProvider>
   );
