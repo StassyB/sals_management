@@ -1,7 +1,25 @@
 import React, { useState } from "react";
-import { Box, Paper, Typography, Button, Select, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import {
+  Box,
+  Paper,
+  Typography,
+  Button,
+  Select,
+  MenuItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  useMediaQuery
+} from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 
 export default function Reports() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   const [reportType, setReportType] = useState("Products");
 
   const salesData = [
@@ -71,38 +89,59 @@ export default function Reports() {
         Reports
       </Typography>
 
-      <Select value={reportType} onChange={(e) => setReportType(e.target.value)} sx={{ mb: 1, mr: 2 }}>
-        <MenuItem value="Sales">Sales</MenuItem>
-        <MenuItem value="Customers">Customers</MenuItem>
-        <MenuItem value="Products">Products</MenuItem>
-      </Select>
-<Box sx={{ textAlign: "right" }}>
-      <Button variant="contained" onClick={handlePrint}>
-        Print {reportType} Report
-      </Button>
-</Box>
-      <Paper sx={{ p: 2, borderRadius: 2, mt: 3 }}>
+      <Box sx={{ display: "flex", alignItems: "center", mb: 2, flexWrap: "wrap" }}>
+        <Select
+          value={reportType}
+          onChange={(e) => setReportType(e.target.value)}
+          sx={{ mb: 1, mr: 2, minWidth: 150 }}
+        >
+          <MenuItem value="Sales">Sales</MenuItem>
+          <MenuItem value="Customers">Customers</MenuItem>
+          <MenuItem value="Products">Products</MenuItem>
+        </Select>
+
+        <Box sx={{ ml: "auto" }}>
+          <Button variant="contained" onClick={handlePrint}>
+            Print {reportType} Report
+          </Button>
+        </Box>
+      </Box>
+
+      <Paper sx={{ p: 2, borderRadius: 2 }}>
         <div id="report-section">
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  {Object.keys(getData()[0] || {}).map((key) => (
-                    <TableCell key={key}>{key.toUpperCase()}</TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {getData().map((row) => (
-                  <TableRow key={row.id}>
-                    {Object.values(row).map((value, index) => (
-                      <TableCell key={index}>{value}</TableCell>
+          {!isMobile && (
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    {Object.keys(getData()[0] || {}).map((key) => (
+                      <TableCell key={key}>{key.toUpperCase()}</TableCell>
                     ))}
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {getData().map((row) => (
+                    <TableRow key={row.id}>
+                      {Object.values(row).map((value, index) => (
+                        <TableCell key={index}>{value}</TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+
+          {/* Mobile View: Stacked Cards */}
+          {isMobile && getData().map((row) => (
+            <Paper key={row.id} sx={{ p: 2, mb: 2, boxShadow: 1 }}>
+              {Object.entries(row).map(([key, value]) => (
+                <Typography key={key} variant="body2">
+                  <strong>{key.toUpperCase()}:</strong> {value}
+                </Typography>
+              ))}
+            </Paper>
+          ))}
         </div>
       </Paper>
     </Box>
